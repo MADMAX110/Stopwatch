@@ -7,17 +7,30 @@ import android.widget.TextView;
 import java.util.Locale;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
+
 
 public class StopwatchActivity extends Activity {
 
     private int seconds = 0;//记录已经过去的秒数
     private boolean running;//秒表是否正常运行
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
+        if (savedInstanceState != null) {
+            seconds = savedInstanceState.getInt("seconds");
+            running = savedInstanceState.getBoolean("running");
+        }
+
         runTimer();//使用单独的方法更新秒表。创建活动会调用这个方法
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        savedInstanceState.putInt("seconds", seconds);
+        savedInstanceState.putBoolean("running", running);
     }
 
     //启动秒表
@@ -60,6 +73,5 @@ public class StopwatchActivity extends Activity {
                 handler.postDelayed(this, 1000);
             }
         });
-
     }
 }
