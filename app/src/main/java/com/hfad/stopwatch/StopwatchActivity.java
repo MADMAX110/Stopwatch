@@ -14,7 +14,9 @@ public class StopwatchActivity extends Activity {
 
     private int seconds = 0;//记录已经过去的秒数
     private boolean running;//秒表是否正常运行
-    
+    //记录onStop之前秒表是否在运行，这样就知道是否需要恢复运行
+    private boolean wasRunning;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +24,8 @@ public class StopwatchActivity extends Activity {
         if (savedInstanceState != null) {
             seconds = savedInstanceState.getInt("seconds");
             running = savedInstanceState.getBoolean("running");
+            //保存wasRunning变量的状态
+            wasRunning = savedInstanceState.getBoolean("wasRunning");
         }
 
         runTimer();//使用单独的方法更新秒表。创建活动会调用这个方法
@@ -31,6 +35,21 @@ public class StopwatchActivity extends Activity {
     protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         savedInstanceState.putInt("seconds", seconds);
         savedInstanceState.putBoolean("running", running);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (wasRunning) {
+            running = true;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        wasRunning = running;
+        running = false;
     }
 
     //启动秒表
